@@ -1,6 +1,6 @@
 <template>
   <div class="gallery">
-    <!-- Filtros -->
+
     <div class="filters">
       <input
         type="text"
@@ -29,22 +29,28 @@
 
     <div class="media-list">
       <div v-for="item in filteredMedia" :key="item.id" class="media-item">
-        <img
-          v-if="item.type === 'image'"
-          :src="item.url"
-          :alt="item.title"
-          
-        />
-        <video
-          v-if="item.type === 'video'"
-          :src="item.url"
-          controls
-          
-        ></video>
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.media }}</p>
+        <a :href="item.media" target="_blank">
+          <div v-if="item.media_type === 'image'">          
+            <img 
+              :src="item.media"  
+              :alt="item.name"
+              style="max-width: 100%; max-height: auto;"  
+            />       
+          </div>
+
+          <div v-if="item.media_type === 'video'">          
+            <video 
+              :src="item.media"  
+              controls            
+              style="max-width: 100%; max-height: auto;"
+            >
+              Seu navegador não suporta a tag de vídeo.
+            </video>        
+          </div>
+        </a>  
+        <h3>{{ item.name }}</h3>                         
       </div>
-    </div>
+    </div>    
 
     <div v-if="loading">Carregando...</div>
 
@@ -63,24 +69,24 @@ import api from "../services/api";
 export default {
   data() {
     return {
-      images: [], // Armazenar as imagens
-      filteredMedia: [], // Mídias filtradas
-      searchName: "", // Nome a ser pesquisado
-      selectedCategory: "", // Categoria selecionada
-      selectedType: "", // Tipo selecionado (imagem ou vídeo)
-      loading: true, // Indica se as imagens estão sendo carregadas
-      error: null, // Armazena a mensagem de erro se houver
-      categories: [], // Categorias disponíveis
+      medias: [], 
+      filteredMedia: [], 
+      searchName: "", 
+      selectedCategory: "", 
+      selectedType: "", 
+      loading: true, 
+      error: null, 
+      categories: [], 
     };
   },
   created() {
-    this.fetchImages();
+    this.fetchMedias();
   },
   methods: {
-    async fetchImages() {
+    async fetchMedias() {
       try {
         const response = await api.get("/midias");
-        this.medias = response.data;
+        this.medias = response.data;        
         this.categories = [
           ...new Set(response.data.map((item) => item.category_name)),
         ];
@@ -88,7 +94,7 @@ export default {
           ...new Set(response.data.map((item) => item.media_type)),
         ];
         this.filteredMedia = this.medias;
-        this.loading = false; // Estado de carregamento
+        this.loading = false; 
       } catch (error) {
         this.error = "Erro ao carregar as imagens"; 
         this.loading = false; 
@@ -116,30 +122,33 @@ export default {
 </script>
 
 <style scoped>
+
 .gallery {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  flex-direction: column; 
+  gap: 5px;
 }
 
 .filters {
   display: flex;
+  flex-wrap: wrap; 
   margin-top: 2rem;
   margin-bottom: 20px;
   gap: 10px;
+  justify-content: center; 
 }
 
 .filters input,
 .filters select {
   padding: 8px;
   font-size: 16px;
+  max-width: 300px; 
 }
 
 .media-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
   gap: 20px;
 }
 
@@ -147,15 +156,22 @@ export default {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 250px;
+  width: 420px;  
   padding: 10px;
   text-align: center;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out; 
 }
 
-.media-thumbnail {
-  max-width: 100%;
-  border-radius: 8px;
-  margin-bottom: 10px;
+@media (max-width: 768px) {
+  .media-list {
+    flex-direction: column; 
+  }
+
+  .filters {
+    flex-direction: column; 
+    gap: 15px;
+  }
 }
 
 .loading,
@@ -163,6 +179,7 @@ export default {
   font-size: 16px;
   text-align: center;
   margin-top: 20px;
+  color: rgb(0, 89, 255); 
 }
 
 h3 {
@@ -174,6 +191,4 @@ p {
   font-size: 14px;
   color: #555;
 }
-
-
 </style>
