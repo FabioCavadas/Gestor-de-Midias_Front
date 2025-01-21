@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <Header />
-    <MediaGallery />    
+    <Header />    
+    <router-view></router-view>    
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue'
-import MediaGallery from './components/MediaGallery.vue';
+import MediaGallery from './components/MediaGallery.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
-    MediaGallery
+    MediaGallery    
   }
 }
 </script>
