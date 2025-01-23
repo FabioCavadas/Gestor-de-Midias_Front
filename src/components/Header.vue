@@ -1,7 +1,7 @@
 <template>
     <header class="app-header">
       <img src="../assets/logo.png" alt="Logo Gestor de Mídias" />     
-      <h1>Gestor de Mídias</h1>      
+      <h1>Gestor de Mídias</h1>
       <div class="auth">
         <button v-if="$route.name !== 'login' && $route.name !== 'register'" @click="goToRegister">Registrar</button>
         <button v-if="$route.name !== 'register' && $route.name !== 'login'" @click="goToLogin">Login</button>
@@ -11,8 +11,7 @@
   </template>
 
 <script>  
-export default {
-  
+export default {  
     methods: {
       goToRegister() {        
         this.$router.push({ name: 'register' });   
