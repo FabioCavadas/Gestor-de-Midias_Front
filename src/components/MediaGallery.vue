@@ -1,6 +1,5 @@
 <template>
   <div class="gallery">
-
     <div class="filters">
       <input
         type="text"
@@ -8,18 +7,12 @@
         placeholder="Pesquisar por nome"
         @input="filterMedia"
       />
-
       <select v-model="selectedCategory" @change="filterMedia">
         <option value="">Categorias</option>
-        <option
-          v-for="category in categories"
-          :key="category"
-          :value="category"
-        >
+        <option v-for="category in categories" :key="category" :value="category">
           {{ category }}
         </option>
       </select>
-
       <select v-model="selectedType" @change="filterMedia">
         <option value="">Tipos</option>
         <option value="image">Imagem</option>
@@ -30,6 +23,7 @@
     <div class="media-list">
       <div v-for="item in filteredMedia" :key="item.id" class="media-item">
         <a :href="item.media" target="_blank">
+          
           <div v-if="item.media_type === 'image'">          
             <img 
               :src="item.media"  
@@ -37,15 +31,14 @@
               style="max-width: 100%; max-height: auto;"  
             />       
           </div>
-
-          <div v-if="item.media_type === 'video'">          
+          
+          <div v-if="item.media_type === 'video' && isAuthenticated">          
             <video 
               :src="item.media"  
-              controls            
-              style="max-width: 100%; max-height: auto;"
-            >
+              controls
+              style="max-width: 100%; max-height: auto;">
               Seu navegador não suporta a tag de vídeo.
-            </video>        
+            </video>            
           </div>
         </a>  
         <h3>{{ item.name }}</h3>                         
@@ -59,70 +52,82 @@
     <div v-if="filteredMedia.length === 0 && !loading">
       Nenhuma mídia encontrada
     </div>
+
+    <div v-if="selectedType === 'video' && !isAuthenticated" class="login-prompt">
+      <b>Você não possui permissão para acessar vídeos, necessário registrar-se e efetuar login.</b>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import api from "../services/api";
 
 export default {
   data() {
     return {
-      medias: [], 
-      filteredMedia: [], 
-      searchName: "", 
-      selectedCategory: "", 
-      selectedType: "", 
-      loading: true, 
-      error: null, 
-      categories: [], 
+      medias: [],
+      filteredMedia: [],
+      searchName: "",
+      selectedCategory: "",
+      selectedType: "",
+      loading: true,
+      error: null,
+      categories: [],
+      isAuthenticated: false,  
     };
   },
   created() {
-    this.fetchMedias();
+    this.checkAuthentication();
+    this.fetchMedias();      
   },
-  methods: {
+  methods: {    
+    checkAuthentication() {
+      const token = localStorage.getItem('token');
+      this.isAuthenticated = !!token;  
+    },    
     async fetchMedias() {
       try {
         const response = await api.get("/midias");
-        this.medias = response.data;        
+        this.medias = response.data;
         this.categories = [
           ...new Set(response.data.map((item) => item.category_name)),
         ];
-        this.media_type = [
-          ...new Set(response.data.map((item) => item.media_type)),
-        ];
+
         this.filteredMedia = this.medias;
         this.loading = false; 
       } catch (error) {
-        this.error = "Erro ao carregar as imagens"; 
+        this.error = "Erro ao carregar as mídias"; 
         this.loading = false; 
       }
     },
 
-    // Critérios
-    filterMedia() {
+    filterMedia() {      
+      if (this.selectedType === 'video' && !this.isAuthenticated) {        
+        this.filteredMedia = []; 
+        return;
+      }
+      
       this.filteredMedia = this.medias.filter((item) => {
         const matchesName = this.searchName
           ? item.name.toLowerCase().includes(this.searchName.toLowerCase())
           : true;
+
         const matchesCategory = this.selectedCategory
           ? item.category_name === this.selectedCategory
           : true;
+        
         const matchesType = this.selectedType
           ? item.media_type === this.selectedType
           : true;
-
-        return matchesName && matchesCategory && matchesType;
-      });
+      
+          return matchesName && matchesCategory && matchesType;
+        });
+      }      
     },
-  },
-};
+  };
 </script>
 
 <style scoped>
-
 .gallery {
   display: flex;
   flex-direction: column; 
@@ -156,7 +161,7 @@ export default {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 420px;  
+  width: 430px;  
   padding: 10px;
   text-align: center;
   box-sizing: border-box;

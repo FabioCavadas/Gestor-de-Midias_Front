@@ -2,15 +2,28 @@
     <header class="app-header">
       <img src="../assets/logo.png" alt="Logo Gestor de Mídias" />     
       <h1>Gestor de Mídias</h1>
-      <button @click="goToRegister">Registrar</button>
+      <div class="auth">
+        <button v-if="$route.name !== 'login' && $route.name !== 'register'" @click="goToRegister">Registrar</button>
+        <button v-if="$route.name !== 'register' && $route.name !== 'login'" @click="goToLogin">Login</button>
+        <button v-if="$route.name !== 'login'" @click="logout">Sair</button>        
+      </div>      
     </header>
   </template>
-  
-  <script>
-  export default {
+
+<script>  
+export default {  
     methods: {
-      goToRegister() {
-        this.$router.push({ name: 'api/user/register' });  
+      goToRegister() {        
+        this.$router.push({ name: 'register' });   
+      },          
+      goToLogin() {   
+        this.$router.push({ name: 'login' });     
+      },      
+      logout() {        
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshtoken');
+        
+        this.$router.push('login');
       }
     }
   };
@@ -22,7 +35,7 @@
     align-items: center;
     justify-content: space-between;    
     background-color: #fff;  
-    border-bottom: 3px solid #ccc;     
+    border-bottom: 3px solid #ccc;         
   }
 
 img {
@@ -40,7 +53,12 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;  
-}  
+  background-color: #4CAF50;  
+}
+
+.auth{
+  display: flex;
+  gap: 5px;
+}
 
 </style>

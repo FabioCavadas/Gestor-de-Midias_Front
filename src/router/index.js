@@ -1,14 +1,19 @@
+import Vue from 'vue';
 import VueRouter from 'vue-router'
+import MediaGallery from '@/components/MediaGallery.vue';
+import Login from '@/views/Login.vue';  
+import Register from '@/views/Register.vue';
 
 Vue.use(VueRouter);
 
-// Definir as rotas para Login e Register
 const routes = [
-  { path: '/', component: App },
-  { path: '/login', name: 'login', component: () => import('./views/Login.vue') },
-  { path: '/register', name: 'register', component: () => import('./views/Register.vue') }
+  { path: '/', name:'midias',component: MediaGallery },
+  { path: '/login/', name: 'login', component: Login},
+  { path: '/register/', name: 'register', component: Register }
 ];
 
 const router = new VueRouter({
   routes
 });
+
+export default router;

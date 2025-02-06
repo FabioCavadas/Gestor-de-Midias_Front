@@ -6,33 +6,82 @@
       <input type="password" v-model="password" placeholder="Senha" />
       <button @click="register">Registrar</button>
     </div>
-  </template>
+</template>
   
-  <script>
+<script>
+import api from "../services/api";
+
   export default {
     data() {
       return {
         username: '',
         email: '',
-        password: ''
+        password: ''        
       };
     },
     methods: {
-      register() {        
-        console.log('Registrando usuário:', this.username, this.email, this.password);
+      async register() {
+      try {      
+        const response = await api.post('/user/register/', {        
+          username: this.username,
+          email: this.email, 
+          password: this.password,            
+        });
+
+        alert('Usuário registrado com sucesso!');
+
+        this.$router.push({ name: 'login' });
+        
+      } catch (error) {        
+        alert('Erro ao tentar registrar o usuário!');
       }
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .register-form {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+    },
   }
-  </style>
+};
+</script>
+  
+<style scoped>
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    margin: auto; 
+    margin-top: 3rem;    
+  }
+
+  input {
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px #4CAF50;
+}
+
+button {
+  padding: 14px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: r#45a049;
+}
+
+</style>
   
