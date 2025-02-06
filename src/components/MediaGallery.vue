@@ -36,17 +36,16 @@
               :alt="item.name"
               style="max-width: 100%; max-height: auto;"  
             />       
-          </div>
-
-          <div v-if="item.media_type === 'video'">          
-            <video 
-              :src="item.media"  
-              controls            
-              style="max-width: 100%; max-height: auto;"
-            >
-              Seu navegador não suporta a tag de vídeo.
-            </video>        
-          </div>
+          </div>          
+            <div v-if="item.media_type === 'video'">          
+              <video 
+                :src="item.media"  
+                controls="isAuthenticated"          
+                style="max-width: 100%; max-height: auto;"
+              >
+                Seu navegador não suporta a tag de vídeo.
+              </video>            
+            </div>          
         </a>  
         <h3>{{ item.name }}</h3>                         
       </div>
@@ -76,12 +75,12 @@ export default {
       selectedType: "", 
       loading: true, 
       error: null, 
-      categories: [], 
+      categories: [],      
     };
   },
   created() {
-    this.fetchMedias();
-  },
+    this.fetchMedias();    
+  },  
   methods: {
     async fetchMedias() {
       try {
@@ -117,7 +116,7 @@ export default {
         return matchesName && matchesCategory && matchesType;
       });
     },
-  },
+  }
 };
 </script>
 
@@ -156,7 +155,7 @@ export default {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 420px;  
+  width: 430px;  
   padding: 10px;
   text-align: center;
   box-sizing: border-box;
