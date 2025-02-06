@@ -23,7 +23,9 @@ import api from "../services/api";
         const response = await api.post('/user/login/', {
           username: this.username,
           password: this.password,
-        });        
+        },  
+        { noAuth: true }
+      );        
         localStorage.setItem('token', response.data.access);   
         this.$router.push('/');        
       } catch (error) {
